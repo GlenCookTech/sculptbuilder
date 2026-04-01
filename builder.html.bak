@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sculpt Class Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<style>
+  :root {
+    --bg: #0f0f11;
+    --surface: #18181c;
+    --surface2: #222228;
+    --surface3: #2a2a32;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #f0eff4;
+    --text2: #9998a8;
+    --text3: #5a5968;
+    --accent: #c8f564;
+    --accent-dim: rgba(200,245,100,0.12);
+    --accent-text: #8db53a;
+    --red: #ff6b6b;
+    --red-dim: rgba(255,107,107,0.1);
+    --amber: #fbbf24;
+    --amber-dim: rgba(251,191,36,0.1);
+    --purple: #a78bfa;
+    --purple-dim: rgba(167,139,250,0.1);
+    --cyan: #22d3ee;
+    --cyan-dim: rgba(34,211,238,0.1);
+    --orange: #fb923c;
+    --orange-dim: rgba(251,146,60,0.1);
+    --teal: #2dd4bf;
+    --teal-dim: rgba(45,212,191,0.1);
+    --r: 10px;
+    --r-sm: 6px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .sidebar-header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 14px;
+  }
+
+  .timer-block {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    padding: 14px 16px 12px;
+  }
+
+  .timer-label {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+
+  .timer-display {
+    font-family: 'DM Mono', monospace;
+    font-size: 36px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .timer-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .timer-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .timer-bar-label {
+    font-size: 10px;
+    color: var(--text3);
+    width: 52px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .timer-bar-track {
+    flex: 1;
+    height: 3px;
+    background: var(--surface3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .timer-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  .timer-bar-dur {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    width: 24px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .sidebar-stats {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .stat-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .track-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .track-nav::-webkit-scrollbar { width: 4px; }
+  .track-nav::-webkit-scrollbar-track { background: transparent; }
+  .track-nav::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 2px; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    transition: background 0.15s;
+    border: 1px solid transparent;
+    user-select: none;
+  }
+
+  .nav-item:hover { background: var(--surface2); }
+  .nav-item.active { background: var(--surface2); border-color: var(--border2); }
+
+  .nav-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .nav-name {
+    font-size: 13px;
+    color: var(--text2);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .nav-item.active .nav-name { color: var(--text); }
+
+  .nav-dur {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  .sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 16px;
+    border-radius: var(--r-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    width: 100%;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0f0f11;
+  }
+  .btn-primary:hover { background: #d4f87a; }
+  .btn-primary:disabled { opacity: 0.5; cursor: default; }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--border2);
+  }
+  .btn-ghost:hover { background: var(--surface2); color: var(--text); }
+
+  /* MAIN */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  .main-header {
+    padding: 24px 32px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  .track-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .track-num-badge {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .track-title-input {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 100%;
+    min-width: 200px;
+  }
+
+  .track-title-input::placeholder { color: var(--text3); }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    align-items: center;
+  }
+
+  .btn-sm {
+    padding: 7px 14px;
+    border-radius: var(--r-sm);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn-sm:hover { background: var(--surface2); color: var(--text); }
+  .btn-sm.danger:hover { border-color: var(--red); color: var(--red); background: var(--red-dim); }
+
+  /* CONTENT */
+  .main-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px 32px;
+  }
+
+  .main-content::-webkit-scrollbar { width: 4px; }
+  .main-content::-webkit-scrollbar-track { background: transparent; }
+  .main-content::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 2px; }
+
+  .section {
+    margin-bottom: 28px;
+  }
+
+  .section-title {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+
+  /* MUSCLES */
+  .muscles-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .chip {
+    padding: 5px 13px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--text3);
+    transition: all 0.15s;
+    user-select: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .chip:hover { border-color: rgba(255,255,255,0.25); color: var(--text2); }
+  .chip.on { border-color: transparent; }
+
+  /* EXERCISES */
+  .ex-wrap {
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+  }
+
+  .ex-header {
+    display: grid;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    user-select: none;
+  }
+
+  .ex-header-cell {
+    padding: 9px 14px;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .ex-header-cell.counts-hdr { text-align: right; }
+
+  .col-resizer {
+    width: 4px;
+    background: transparent;
+    cursor: col-resize;
+    position: relative;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .col-resizer:hover, .col-resizer.dragging { background: var(--accent); }
+
+  .ex-row-item {
+    display: grid;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+  .ex-row-item:last-child { border-bottom: none; }
+  .ex-row-item:hover { background: rgba(255,255,255,0.02); }
+
+  .ex-name-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
+  .ex-counts-select {
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 10px 6px 10px 0;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text2);
+    cursor: pointer;
+    width: 100%;
+    text-align: right;
+    -webkit-appearance: none;
+    appearance: none;
+    min-width: 0;
+  }
+
+  .ex-counts-select option { background: #222228; }
+
+  .ex-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text3);
+    font-size: 14px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.1s;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 40px;
+  }
+  .ex-remove:hover { color: var(--red); }
+
+  .drag-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px 0 10px;
+    width: 32px;
+    flex-shrink: 0;
+  }
+
+  .add-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    align-items: center;
+  }
+
+  .add-input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--r-sm);
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .add-input:focus { border-color: rgba(255,255,255,0.3); }
+  .add-input::placeholder { color: var(--text3); }
+
+  .add-select {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--r-sm);
+    padding: 8px 10px;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text2);
+    outline: none;
+    cursor: pointer;
+  }
+  .add-select option { background: #222228; }
+
+  .btn-add {
+    padding: 8px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: var(--r-sm);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .btn-add:hover { color: var(--text); border-color: rgba(255,255,255,0.25); }
+
+  /* DURATION */
+  .dur-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .dur-row input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 3px;
+    background: var(--surface3);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .dur-row input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+
+  .dur-row input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+  .dur-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    min-width: 52px;
+    text-align: right;
+  }
+
+  /* NOTES */
+  .notes-ta {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--r-sm);
+    padding: 10px 14px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    resize: vertical;
+    min-height: 72px;
+    outline: none;
+    line-height: 1.6;
+    transition: border-color 0.15s;
+  }
+
+  .notes-ta:focus { border-color: rgba(255,255,255,0.3); }
+  .notes-ta::placeholder { color: var(--text3); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 12px;
+    color: var(--text3);
+  }
+
+  .empty-icon {
+    font-size: 48px;
+    margin-bottom: 8px;
+  }
+
+  .empty-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    color: var(--text2);
+  }
+
+  .empty-sub { font-size: 13px; }
+
+  /* ADD TRACK BUTTON */
+  .add-track-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    border: 1px dashed var(--border2);
+    background: transparent;
+    color: var(--text3);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    width: 100%;
+    transition: all 0.15s;
+    margin-top: 4px;
+  }
+  .add-track-btn:hover { border-color: var(--accent-text); color: var(--accent-text); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    padding: 12px 20px;
+    font-size: 13px;
+    color: var(--text);
+    opacity: 0;
+    transition: all 0.25s;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* DRAG HANDLE */
+  .drag-handle {
+    cursor: grab;
+    color: var(--text3);
+    padding: 10px 6px 10px 14px;
+    font-size: 12px;
+    line-height: 1;
+    user-select: none;
+  }
+  .drag-handle:active { cursor: grabbing; }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 0 28px;
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">Sculpt Builder</div>
+    <div class="timer-block">
+      <div class="timer-label">Class duration</div>
+      <div class="timer-display" id="timerDisplay">35:00</div>
+      <div class="timer-bars" id="timerBars"></div>
+    </div>
+  </div>
+
+  <div class="track-nav" id="trackNav"></div>
+
+  <div class="sidebar-footer">
+    <button class="add-track-btn" onclick="addTrack()">
+      <span>+</span> Add track
+    </button>
+    <button class="btn btn-primary" id="exportBtn" onclick="exportDocx()">
+      ↓ Export Word doc
+    </button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div id="mainContent" class="main-content">
+    <div class="empty-state">
+      <div class="empty-icon">🏋️</div>
+      <div class="empty-title">Select a track</div>
+      <div class="empty-sub">Choose a track from the sidebar to edit it</div>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TRACK_COLORS = [
+  { dot: '#fbbf24', bg: 'rgba(251,191,36,0.15)', text: '#fbbf24', hex:'FEF3C7', accent:'D97706' },
+  { dot: '#a78bfa', bg: 'rgba(167,139,250,0.15)', text: '#a78bfa', hex:'EDE9FE', accent:'7C3AED' },
+  { dot: '#f87171', bg: 'rgba(248,113,113,0.15)', text: '#f87171', hex:'FEE2E2', accent:'DC2626' },
+  { dot: '#22d3ee', bg: 'rgba(34,211,238,0.15)',  text: '#22d3ee', hex:'CFFAFE', accent:'0891B2' },
+  { dot: '#fb923c', bg: 'rgba(251,146,60,0.15)',  text: '#fb923c', hex:'FFEDD5', accent:'EA580C' },
+  { dot: '#2dd4bf', bg: 'rgba(45,212,191,0.15)',  text: '#2dd4bf', hex:'D1FAE5', accent:'059669' },
+];
+
+const MUSCLES = ['Biceps','Triceps','Shoulders','Back','Chest','Quads','Hamstrings','Glutes','Calves','Core','Hip flexors'];
+const COUNTS  = ['8 counts','16 counts','32 counts','2x32','3x32','4x32'];
+const EMOJIS  = ['🌅','💪','🦵','🏋️','🔥','🧘','⚡','🎯'];
+
+let state = [
+  { id:1, name:'Warm-up', duration:5, muscles:['Biceps','Triceps','Shoulders','Back','Quads','Glutes','Core'],
+    exercises:[{name:'Shoulder rolls + reach',counts:'2x32'},{name:'Squat pulse',counts:'32 counts'},{name:'Bicep curl (light)',counts:'16 counts'},{name:'Lateral raise',counts:'16 counts'},{name:'Hip hinge + row',counts:'32 counts'},{name:'Lunge with twist',counts:'32 counts'}],
+    notes:'Light weights. Hit every group with 1-2 moves each. Set the tempo.' },
+  { id:2, name:'Biceps & Triceps', duration:6, muscles:['Biceps','Triceps'],
+    exercises:[{name:'Bicep curl (full range)',counts:'2x32'},{name:'Hammer curl',counts:'32 counts'},{name:'Overhead tricep extension',counts:'2x32'},{name:'Tricep kickback',counts:'32 counts'},{name:'Superset: curl + extension',counts:'32 counts'}],
+    notes:'Alternate bicep/tri sets. Keep elbows pinned on curls.' },
+  { id:3, name:'Squats & Lunges', duration:7, muscles:['Quads','Hamstrings','Glutes','Calves'],
+    exercises:[{name:'Squat (3 down, 1 up)',counts:'2x32'},{name:'Squat pulse',counts:'32 counts'},{name:'Reverse lunge (alternating)',counts:'2x32'},{name:'Static lunge pulse (R)',counts:'16 counts'},{name:'Static lunge pulse (L)',counts:'16 counts'},{name:'Squat + hold',counts:'8 counts'}],
+    notes:'Biggest muscle group — go heavier here. Watch knee tracking on lunges.' },
+  { id:4, name:'Shoulders', duration:6, muscles:['Shoulders','Back'],
+    exercises:[{name:'Lateral raise',counts:'2x32'},{name:'Front raise',counts:'32 counts'},{name:'Arnold press',counts:'32 counts'},{name:'Bent-over rear delt fly',counts:'32 counts'},{name:'Upright row',counts:'2x32'}],
+    notes:'Lighter weights — shoulders fatigue fast. 90° rule on raises.' },
+  { id:5, name:'Core', duration:6, muscles:['Core','Hip flexors'],
+    exercises:[{name:'Crunches (2 up, 2 down)',counts:'2x32'},{name:'Bicycle',counts:'32 counts'},{name:'Plank hold',counts:'2x32'},{name:'Side plank (R)',counts:'16 counts'},{name:'Side plank (L)',counts:'16 counts'},{name:'Dead bug',counts:'32 counts'}],
+    notes:'Mat work. Cue neutral spine constantly. End with a big breath.' },
+  { id:6, name:'Stretch & Cool-down', duration:5, muscles:['Biceps','Triceps','Shoulders','Back','Quads','Hamstrings','Glutes','Core'],
+    exercises:[{name:'Quad stretch (standing)',counts:'16 counts'},{name:'Hamstring reach',counts:'16 counts'},{name:'Chest opener',counts:'16 counts'},{name:'Shoulder cross-body',counts:'16 counts'},{name:'Tricep overhead stretch',counts:'16 counts'},{name:'Seated forward fold',counts:'32 counts'},{name:'Supine twist (each side)',counts:'2x32'}],
+    notes:'No weights. Held stretches on the 32 count. Cue breathing.' },
+];
+
+let activeTrack = 0;
+
+function col(ti) { return TRACK_COLORS[ti % TRACK_COLORS.length]; }
+function emoji(ti) { return EMOJIS[ti % EMOJIS.length]; }
+function totalMin() { return state.reduce((s,t) => s + t.duration, 0); }
+function totalEx()  { return state.reduce((s,t) => s + t.exercises.length, 0); }
+
+function updateStats() {
+  const total = totalMin();
+  const mm = String(Math.floor(total)).padStart(2,'0');
+  const ss = '00';
+  const timerEl = document.getElementById('timerDisplay');
+  if (timerEl) timerEl.textContent = `${mm}:${ss}`;
+
+  // Update sidebar nav durations
+  document.querySelectorAll('.nav-dur').forEach((el, i) => {
+    if (state[i]) el.textContent = state[i].duration + 'm';
+  });
+
+  // Render track bars
+  const barsEl = document.getElementById('timerBars');
+  if (!barsEl) return;
+  barsEl.innerHTML = '';
+  const barColors = ['#fbbf24','#a78bfa','#f87171','#22d3ee','#fb923c','#2dd4bf'];
+  state.forEach((t, ti) => {
+    const pct = total > 0 ? (t.duration / total) * 100 : 0;
+    const row = document.createElement('div');
+    row.className = 'timer-bar-row';
+    row.innerHTML = `
+      <span class="timer-bar-label">${t.name}</span>
+      <div class="timer-bar-track">
+        <div class="timer-bar-fill" style="width:${pct.toFixed(1)}%;background:${barColors[ti % barColors.length]}"></div>
+      </div>
+      <span class="timer-bar-dur">${t.duration}m</span>
+    `;
+    barsEl.appendChild(row);
+  });
+}
+
+function renderNav() {
+  const nav = document.getElementById('trackNav');
+  nav.innerHTML = '';
+  state.forEach((t, ti) => {
+    const c = col(ti);
+    const item = document.createElement('div');
+    item.className = 'nav-item' + (ti === activeTrack ? ' active' : '');
+    item.innerHTML = `
+      <div class="nav-dot" style="background:${c.dot}"></div>
+      <span class="nav-name">${t.name}</span>
+      <span class="nav-dur">${t.duration}m</span>`;
+    item.onclick = () => { activeTrack = ti; render(); };
+    nav.appendChild(item);
+  });
+
+  const addBtn = document.createElement('button');
+  addBtn.className = 'add-track-btn';
+  addBtn.innerHTML = '<span>+</span> Add track';
+  addBtn.onclick = addTrack;
+  nav.appendChild(addBtn);
+}
+
+function renderMain() {
+  const el = document.getElementById('mainContent');
+  if (state.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🏋️</div><div class="empty-title">No tracks yet</div><div class="empty-sub">Add a track to get started</div></div>`;
+    return;
+  }
+
+  const t  = state[activeTrack];
+  const ti = activeTrack;
+  const c  = col(ti);
+
+  el.innerHTML = `
+    <div class="section">
+      <div class="track-heading">
+        <div class="track-num-badge" style="background:${c.bg};color:${c.dot}">${emoji(ti)}</div>
+        <input class="track-title-input" value="${esc(t.name)}" placeholder="Track name…" oninput="state[${ti}].name=this.value;renderNav();updateStats()">
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <div class="section-title">Muscle groups</div>
+      <div class="muscles-grid" id="muscleGrid"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Exercises</div>
+      <div class="ex-wrap">
+        <div class="ex-header" id="exHeader">
+          <div class="ex-header-cell" style="padding-left:42px">Exercise</div>
+          <div class="col-resizer" id="colResizer"></div>
+          <div class="ex-header-cell counts-hdr">Counts</div>
+          <div style="width:40px;flex-shrink:0"></div>
+        </div>
+        <div id="exBody"></div>
+      </div>
+      <div class="add-row">
+        <input id="newName" class="add-input" type="text" placeholder="Add exercise…" onkeydown="if(event.key==='Enter')addEx()">
+        <select id="newCounts" class="add-select">${COUNTS.map(c=>`<option>${c}</option>`).join('')}</select>
+        <button class="btn-add" onclick="addEx()">+ Add</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Duration</div>
+      <div class="dur-row">
+        <input type="range" min="2" max="20" step="1" value="${t.duration}"
+          oninput="state[${ti}].duration=parseInt(this.value);document.getElementById('durVal').textContent=this.value+' min';updateStats();renderNav()">
+        <span class="dur-val" id="durVal">${t.duration} min</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Coaching notes</div>
+      <textarea class="notes-ta" placeholder="Add coaching cues, weight guidance, modifications…"
+        oninput="state[${ti}].notes=this.value">${esc(t.notes)}</textarea>
+    </div>
+
+    <div class="section" style="display:flex;gap:8px;padding-top:4px">
+      <button class="btn-sm danger" onclick="deleteTrack(${ti})">Delete track</button>
+      ${ti > 0 ? `<button class="btn-sm" onclick="moveTrack(${ti},-1)">↑ Move up</button>` : ''}
+      ${ti < state.length-1 ? `<button class="btn-sm" onclick="moveTrack(${ti},1)">↓ Move down</button>` : ''}
+    </div>
+  `;
+
+  // Muscle chips
+  const grid = document.getElementById('muscleGrid');
+  MUSCLES.forEach(m => {
+    const chip = document.createElement('div');
+    const on = t.muscles.includes(m);
+    chip.className = 'chip' + (on ? ' on' : '');
+    chip.textContent = m;
+    if (on) chip.style.cssText = `background:${c.bg};color:${c.dot};border-color:${c.dot}40`;
+    chip.onclick = () => {
+      const idx = state[ti].muscles.indexOf(m);
+      if (idx === -1) state[ti].muscles.push(m); else state[ti].muscles.splice(idx,1);
+      renderMain();
+    };
+    grid.appendChild(chip);
+  });
+
+  // Exercise rows
+  const tbody = document.getElementById('exBody');
+  t.exercises.forEach((ex, ei) => {
+    const row = document.createElement('div');
+    row.className = 'ex-row-item';
+    row.id = `exrow-${ei}`;
+    row.innerHTML = `
+      <div class="drag-col"><span class="drag-handle" style="cursor:grab;color:var(--text3);font-size:12px;user-select:none">⠿</span></div>
+      <input class="ex-name-input" value="${esc(ex.name)}" oninput="state[${ti}].exercises[${ei}].name=this.value">
+      <div class="col-resizer" style="pointer-events:none"></div>
+      <select class="ex-counts-select" onchange="state[${ti}].exercises[${ei}].counts=this.value">
+        ${COUNTS.map(c=>`<option${c===ex.counts?' selected':''}>${c}</option>`).join('')}
+      </select>
+      <button class="ex-remove" onclick="removeEx(${ti},${ei})">✕</button>
+    `;
+    tbody.appendChild(row);
+  });
+
+  // Apply column sizes and init resizer
+  applyColSizes();
+  initResizer();
+}
+
+function render() {
+  updateStats();
+  renderNav();
+  renderMain();
+}
+
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function addEx() {
+  const n = document.getElementById('newName').value.trim();
+  if (!n) return;
+  const c = document.getElementById('newCounts').value;
+  state[activeTrack].exercises.push({ name: n, counts: c });
+  render();
+  updateStats();
+  setTimeout(() => {
+    const inp = document.getElementById('newName');
+    if (inp) inp.focus();
+  }, 50);
+}
+
+function removeEx(ti, ei) {
+  state[ti].exercises.splice(ei, 1);
+  render();
+  updateStats();
+}
+
+function addTrack() {
+  const ti = state.length;
+  state.push({
+    id: ti + 1,
+    name: 'New track',
+    duration: 5,
+    muscles: [],
+    exercises: [],
+    notes: ''
+  });
+  activeTrack = ti;
+  render();
+}
+
+function deleteTrack(ti) {
+  if (state.length === 1) { showToast('Need at least one track'); return; }
+  state.splice(ti, 1);
+  state.forEach((t, i) => t.id = i + 1);
+  if (activeTrack >= state.length) activeTrack = state.length - 1;
+  render();
+}
+
+function moveTrack(ti, dir) {
+  const newIdx = ti + dir;
+  if (newIdx < 0 || newIdx >= state.length) return;
+  [state[ti], state[newIdx]] = [state[newIdx], state[ti]];
+  state.forEach((t, i) => t.id = i + 1);
+  activeTrack = newIdx;
+  render();
+}
+
+function showToast(msg, dur = 2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+
+// ── DOCX EXPORT ──────────────────────────────────────────────────────────────
+async function exportDocx() {
+  const btn = document.getElementById('exportBtn');
+  btn.disabled = true;
+  btn.textContent = 'Generating…';
+  showToast('Building your Word document…', 8000);
+
+  try {
+    const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
+            AlignmentType, LevelFormat, BorderStyle, WidthType, ShadingType, VerticalAlign } = docx;
+
+    const DOCX_COLORS = [
+      { hex:'FEF3C7', accent:'D97706' },
+      { hex:'EDE9FE', accent:'7C3AED' },
+      { hex:'FEE2E2', accent:'DC2626' },
+      { hex:'CFFAFE', accent:'0891B2' },
+      { hex:'FFEDD5', accent:'EA580C' },
+      { hex:'D1FAE5', accent:'059669' },
+    ];
+
+    const lb = { style: BorderStyle.SINGLE, size: 1, color: 'E5E7EB' };
+    const lb_ = { top: lb, bottom: lb, left: lb, right: lb };
+    const nb = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' };
+    const nb_ = { top: nb, bottom: nb, left: nb, right: nb };
+
+    const docChildren = [];
+
+    // Title block
+    docChildren.push(new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 0, after: 120 },
+      children: [new TextRun({ text: 'Sculpt Class Plan', bold: true, size: 40, font: 'Arial', color: '1F2937' })]
+    }));
+    docChildren.push(new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 0, after: 480 },
+      children: [new TextRun({ text: `${totalMin()} min total  |  ${state.length} tracks  |  32-count structure`, size: 22, font: 'Arial', color: '9CA3AF', italics: true })]
+    }));
+
+    state.forEach((track, ti) => {
+      const col = DOCX_COLORS[ti % DOCX_COLORS.length];
+      const rows = [];
+
+      // Header row: two cells (no columnSpan)
+      rows.push(new TableRow({ children: [
+        new TableCell({
+          borders: lb_, width: { size: 7000, type: WidthType.DXA },
+          shading: { fill: col.hex, type: ShadingType.CLEAR },
+          margins: { top: 120, bottom: 120, left: 180, right: 120 },
+          children: [new Paragraph({ children: [
+            new TextRun({ text: `Track ${track.id}  `, bold: true, size: 26, font: 'Arial', color: col.accent }),
+            new TextRun({ text: track.name, bold: true, size: 26, font: 'Arial', color: '1F2937' }),
+          ]})]
+        }),
+        new TableCell({
+          borders: lb_, width: { size: 2360, type: WidthType.DXA },
+          shading: { fill: col.hex, type: ShadingType.CLEAR },
+          margins: { top: 120, bottom: 120, left: 120, right: 180 },
+          children: [new Paragraph({
+            alignment: AlignmentType.RIGHT,
+            children: [new TextRun({ text: `${track.duration} min`, size: 22, font: 'Arial', color: '6B7280' })]
+          })]
+        }),
+      ]}));
+
+      // Muscles row
+      if (track.muscles.length > 0) {
+        rows.push(new TableRow({ children: [
+          new TableCell({
+            borders: lb_, width: { size: 7000, type: WidthType.DXA },
+            shading: { fill: 'F9FAFB', type: ShadingType.CLEAR },
+            margins: { top: 80, bottom: 80, left: 180, right: 120 },
+            children: [new Paragraph({ children: [
+              new TextRun({ text: 'Muscles: ', bold: true, size: 18, font: 'Arial', color: '6B7280' }),
+              new TextRun({ text: track.muscles.join(', '), size: 18, font: 'Arial', color: '374151' }),
+            ]})]
+          }),
+          new TableCell({
+            borders: lb_, width: { size: 2360, type: WidthType.DXA },
+            shading: { fill: 'F9FAFB', type: ShadingType.CLEAR },
+            margins: { top: 80, bottom: 80, left: 120, right: 180 },
+            children: [new Paragraph({ children: [new TextRun('')] })]
+          }),
+        ]}));
+      }
+
+      // Exercise rows
+      track.exercises.forEach(ex => {
+        rows.push(new TableRow({ children: [
+          new TableCell({
+            borders: lb_, width: { size: 7000, type: WidthType.DXA },
+            margins: { top: 60, bottom: 60, left: 360, right: 120 },
+            children: [new Paragraph({
+              numbering: { reference: 'bullets', level: 0 },
+              children: [new TextRun({ text: ex.name, size: 20, font: 'Arial', color: '1F2937' })]
+            })]
+          }),
+          new TableCell({
+            borders: lb_, width: { size: 2360, type: WidthType.DXA },
+            margins: { top: 60, bottom: 60, left: 120, right: 180 },
+            children: [new Paragraph({
+              alignment: AlignmentType.RIGHT,
+              children: [new TextRun({ text: ex.counts, size: 18, font: 'Courier New', color: '6B7280' })]
+            })]
+          }),
+        ]}));
+      });
+
+      // Notes row
+      if (track.notes) {
+        rows.push(new TableRow({ children: [
+          new TableCell({
+            borders: lb_, width: { size: 7000, type: WidthType.DXA },
+            shading: { fill: 'F9FAFB', type: ShadingType.CLEAR },
+            margins: { top: 80, bottom: 80, left: 180, right: 120 },
+            children: [new Paragraph({ children: [
+              new TextRun({ text: 'Notes: ', bold: true, size: 18, font: 'Arial', color: '6B7280' }),
+              new TextRun({ text: track.notes, size: 18, font: 'Arial', color: '374151', italics: true }),
+            ]})]
+          }),
+          new TableCell({
+            borders: lb_, width: { size: 2360, type: WidthType.DXA },
+            shading: { fill: 'F9FAFB', type: ShadingType.CLEAR },
+            margins: { top: 80, bottom: 80, left: 120, right: 180 },
+            children: [new Paragraph({ children: [new TextRun('')] })]
+          }),
+        ]}));
+      }
+
+      docChildren.push(new Table({
+        width: { size: 9360, type: WidthType.DXA },
+        columnWidths: [7000, 2360],
+        rows,
+      }));
+      docChildren.push(new Paragraph({ spacing: { before: 0, after: 240 }, children: [new TextRun('')] }));
+    });
+
+    const doc = new Document({
+      numbering: {
+        config: [{ reference: 'bullets', levels: [{
+          level: 0, format: LevelFormat.BULLET, text: '\u2022', alignment: AlignmentType.LEFT,
+          style: { paragraph: { indent: { left: 360, hanging: 180 } } }
+        }]}]
+      },
+      styles: { default: { document: { run: { font: 'Arial', size: 22 } } } },
+      sections: [{ properties: { page: {
+        size: { width: 12240, height: 15840 },
+        margin: { top: 1080, right: 1080, bottom: 1080, left: 1080 }
+      }}, children: docChildren }]
+    });
+
+    const buf = await Packer.toBuffer(doc);
+    const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    saveAs(blob, 'sculpt_class_plan.docx');
+    showToast('Downloaded!');
+  } catch(e) {
+    console.error(e);
+    showToast('Export failed: ' + e.message, 4000);
+  }
+
+  btn.disabled = false;
+  btn.textContent = '↓ Export Word doc';
+}
+
+// ── COLUMN RESIZE ─────────────────────────────────────────────────────────────
+let colNamePct = 52; // percentage of table for the name column (rest goes to counts)
+
+function applyColSizes() {
+  const header = document.getElementById('exHeader');
+  const body   = document.getElementById('exBody');
+  if (!header) return;
+
+  const resizerW = 4;
+  const dragW    = 32;
+  const removeW  = 40;
+  const fixedW   = resizerW + dragW + removeW; // px accounted for outside the flex cols
+
+  const template = `${dragW}px ${colNamePct}fr ${resizerW}px 1fr ${removeW}px`;
+
+  header.style.gridTemplateColumns = template;
+  header.style.display = 'grid';
+
+  Array.from(body.querySelectorAll('.ex-row-item')).forEach(row => {
+    row.style.gridTemplateColumns = template;
+  });
+}
+
+function initResizer() {
+  const resizer = document.getElementById('colResizer');
+  if (!resizer) return;
+
+  let startX, startPct;
+
+  resizer.addEventListener('mousedown', e => {
+    e.preventDefault();
+    startX   = e.clientX;
+    startPct = colNamePct;
+    resizer.classList.add('dragging');
+
+    const wrap = resizer.closest('.ex-wrap');
+    const totalW = wrap ? wrap.getBoundingClientRect().width : 600;
+
+    function onMove(e) {
+      const dx   = e.clientX - startX;
+      const fixedPx = 4 + 32 + 40; // resizer + drag + remove
+      const flexW = totalW - fixedPx;
+      const deltaPct = (dx / flexW) * 100;
+      colNamePct = Math.min(85, Math.max(25, startPct + deltaPct));
+      applyColSizes();
+    }
+
+    function onUp() {
+      resizer.classList.remove('dragging');
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    }
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+}
+
+// Init
+render();
+</script>
+</body>
+</html>
