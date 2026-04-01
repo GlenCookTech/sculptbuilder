@@ -22,7 +22,21 @@
       "Bash(vercel project:*)",
       "Bash(vercel link:*)",
       "Bash(vercel teams:*)",
-      "mcp__supabase__get_project"
+      "mcp__supabase__get_project",
+      "mcp__supabase__get_project_url",
+      "mcp__supabase__get_publishable_keys",
+      "Bash(vercel env:*)",
+      "Bash(vercel whoami:*)",
+      "Read(//c/Users/glen/.config/com.vercel.cli/**)",
+      "Bash(curl -s -X POST 'https://api.vercel.com/v10/projects/prj_4AzsfjnPUVqomN5FMa1KM95NvhVU/env?teamId=team_WXwuopVzgnUWlt0wkYtNkqgS' -H 'Authorization: Bearer vca_2v2Um43o2tfcfVqjhujq0CAdEHOatvFO9lQBFowb0s29HDHqFd1G5Eef' -H 'Content-Type: application/json' -d '{\"key\":\"NEXT_PUBLIC_SUPABASE_URL\",\"value\":\"https://mhahhjqmurvihvmzfekp.supabase.co\",\"target\":[\"preview\",\"development\"],\"type\":\"plain\"}')",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d.get\\('key',''\\), d.get\\('target',''\\), 'created' if 'id' in d else d.get\\('error',{}\\).get\\('message','error'\\)\\)\")",
+      "Bash(curl -s 'https://api.vercel.com/v9/projects/prj_4AzsfjnPUVqomN5FMa1KM95NvhVU/env?teamId=team_WXwuopVzgnUWlt0wkYtNkqgS' -H 'Authorization: Bearer vca_2v2Um43o2tfcfVqjhujq0CAdEHOatvFO9lQBFowb0s29HDHqFd1G5Eef')",
+      "Bash(python -c ':*)",
+      "Bash(curl -s -X POST 'https://api.vercel.com/v10/projects/prj_4AzsfjnPUVqomN5FMa1KM95NvhVU/env?teamId=team_WXwuopVzgnUWlt0wkYtNkqgS' -H 'Authorization: Bearer vca_2v2Um43o2tfcfVqjhujq0CAdEHOatvFO9lQBFowb0s29HDHqFd1G5Eef' -H 'Content-Type: application/json' -d '{\"key\":\"NEXT_PUBLIC_SUPABASE_ANON_KEY\",\"value\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1oYWhoanFtdXJ2aWh2bXpmZWtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNzYxODAsImV4cCI6MjA5MDY1MjE4MH0.8cPUoNlCbfosDGV-jPk5BNNkfAnPRMX4j-lGA1SIN4A\",\"target\":[\"production\"],\"type\":\"plain\"}')",
+      "Bash(python -c \"import sys,json;d=json.load\\(sys.stdin\\);print\\('OK' if 'created' in d or 'id' in d else d\\)\")",
+      "Bash(curl -s -X POST 'https://api.vercel.com/v10/projects/prj_4AzsfjnPUVqomN5FMa1KM95NvhVU/env?teamId=team_WXwuopVzgnUWlt0wkYtNkqgS' -H 'Authorization: Bearer vca_2v2Um43o2tfcfVqjhujq0CAdEHOatvFO9lQBFowb0s29HDHqFd1G5Eef' -H 'Content-Type: application/json' -d '{\"key\":\"NEXT_PUBLIC_SUPABASE_ANON_KEY\",\"value\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1oYWhoanFtdXJ2aWh2bXpmZWtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNzYxODAsImV4cCI6MjA5MDY1MjE4MH0.8cPUoNlCbfosDGV-jPk5BNNkfAnPRMX4j-lGA1SIN4A\",\"target\":[\"preview\",\"development\"],\"type\":\"plain\"}')",
+      "Bash(curl -s -X POST 'https://api.vercel.com/v10/projects/prj_4AzsfjnPUVqomN5FMa1KM95NvhVU/env?teamId=team_WXwuopVzgnUWlt0wkYtNkqgS' -H 'Authorization: Bearer vca_2v2Um43o2tfcfVqjhujq0CAdEHOatvFO9lQBFowb0s29HDHqFd1G5Eef' -H 'Content-Type: application/json' -d '{\"key\":\"ANTHROPIC_API_KEY\",\"value\":\"REPLACE_WITH_YOUR_KEY\",\"target\":[\"production\",\"preview\",\"development\"],\"type\":\"sensitive\"}')",
+      "Bash(curl -s -X POST 'https://api.vercel.com/v10/projects/prj_4AzsfjnPUVqomN5FMa1KM95NvhVU/env?teamId=team_WXwuopVzgnUWlt0wkYtNkqgS' -H 'Authorization: Bearer vca_2v2Um43o2tfcfVqjhujq0CAdEHOatvFO9lQBFowb0s29HDHqFd1G5Eef' -H 'Content-Type: application/json' -d '{\"key\":\"ANTHROPIC_API_KEY\",\"value\":\"REPLACE_WITH_YOUR_KEY\",\"target\":[\"production\",\"preview\"],\"type\":\"sensitive\"}')"
     ]
   }
 }
