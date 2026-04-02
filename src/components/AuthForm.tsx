@@ -40,8 +40,8 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-bg">
-      <div className="w-full max-w-sm bg-surface border border-border2 rounded-xl p-8">
+    <div className="min-h-screen flex items-center justify-center bg-bg px-4">
+      <div className="w-full max-w-sm bg-surface border border-border2 rounded-xl p-6 sm:p-8">
         <h1
           className="text-center text-xs font-bold tracking-widest uppercase mb-6"
           style={{ fontFamily: 'Syne, sans-serif', color: 'var(--text3)' }}
@@ -63,7 +63,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="bg-surface2 border border-border2 rounded-md px-3 py-2.5 text-sm text-text outline-none focus:border-white/30"
+            className="bg-surface2 border border-border2 rounded-md px-3 py-3 sm:py-2.5 text-base sm:text-sm text-text outline-none focus:border-white/30"
           />
           <input
             type="password"
@@ -72,7 +72,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
             onChange={(e) => setPassword(e.target.value)}
             required
             minLength={6}
-            className="bg-surface2 border border-border2 rounded-md px-3 py-2.5 text-sm text-text outline-none focus:border-white/30"
+            className="bg-surface2 border border-border2 rounded-md px-3 py-3 sm:py-2.5 text-base sm:text-sm text-text outline-none focus:border-white/30"
           />
 
           {error && (
@@ -82,7 +82,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
           <button
             type="submit"
             disabled={loading}
-            className="bg-accent text-bg font-medium text-sm py-2.5 rounded-md hover:brightness-110 disabled:opacity-50 transition-all"
+            className="bg-accent text-bg font-medium text-sm py-3 sm:py-2.5 rounded-md hover:brightness-110 disabled:opacity-50 transition-all min-h-[48px] sm:min-h-0"
           >
             {loading ? 'Loading...' : mode === 'signin' ? 'Sign in' : 'Sign up'}
           </button>
@@ -92,7 +92,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
           {mode === 'signin' ? "Don't have an account?" : 'Already have an account?'}{' '}
           <button
             onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError(''); }}
-            className="text-accent-text hover:text-accent underline"
+            className="text-accent-text hover:text-accent underline py-2 px-1 min-h-[44px] inline-flex items-center"
           >
             {mode === 'signin' ? 'Sign up' : 'Sign in'}
           </button>
