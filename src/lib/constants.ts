@@ -8,22 +8,25 @@ export const TRACK_COLORS = [
 ];
 
 export const MUSCLES = [
-  'Biceps', 'Triceps', 'Shoulders', 'Back', 'Chest',
-  'Quads', 'Hamstrings', 'Glutes', 'Calves', 'Core', 'Hip flexors',
+  'Biceps', 'Triceps', 'Shoulders', 'Back', 'Chest', 'Legs', 'Core',
 ];
 
 export const COUNTS = [
+  'singles',
+  '1x3',
+  '2x2',
+  '3x1',
+  '4x4',
   '8 counts',
   '16 counts',
   '32 counts',
   '2x32',
   '3x32',
   '4x32',
-  'singles',
-  '1x3',
-  '2x2',
-  '3x1',
-  '4x4',
+  '2, 4x4 then 2, 3x1',
+  '2, 4x4 then 2, 2x2',
+  '4x4 then singles',
+  '2x2 then 1x3',
 ];
 
 export const TRACK_EMOJIS = ['🌅', '💪', '🦵', '🏋️', '🔥', '🧘', '⚡', '🎯'];
