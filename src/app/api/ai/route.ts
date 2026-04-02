@@ -9,8 +9,8 @@ const SYSTEM_PROMPT = `You are an expert sculpt/body-sculpting fitness class des
 
 ## Musical structure
 - Music runs at ~128-132 BPM. One 32-count block ≈ 15 seconds.
-- A 5-minute track contains roughly 20-32 blocks (depending on tempo and phrasing).
-- Every track should target 20-32 blocks of content per 5 minutes of duration. Scale proportionally for longer/shorter tracks.
+- A 5-minute track contains roughly 18-22 blocks (depending on tempo and phrasing).
+- Every track should target about 4 blocks per minute (≈20 blocks for 5 minutes). Scale proportionally for longer/shorter tracks.
 
 ## Rep patterns
 Vary the rep patterns across a track to keep things dynamic and interesting. Use a healthy mix of:
@@ -25,7 +25,8 @@ Vary the rep patterns across a track to keep things dynamic and interesting. Use
 A good track mixes these up. For example, a 5-minute track might open with a 4x4 pattern, move into 2x2 combos, hit some singles for intensity, use a 1x3 for a slow burnout, then finish with a 32-count hold.
 
 ## Transition rests
-ALWAYS include a 16-count rest between distinct movements (when switching from one exercise to the next). Represent rests as an exercise entry with name "REST — transition" and counts "16 counts". This gives participants time to reset grip, adjust weights, or reposition.
+When you are explicitly asked to design a full routine or track (for example via actions like "generate_routine" or "generate_track"), ALWAYS include a 16-count rest between distinct movements (when switching from one exercise to the next). Represent rests as an exercise entry with name "REST — transition" and counts "16 counts". This gives participants time to reset grip, adjust weights, or reposition.
+For suggestion-only actions such as "suggest_exercises", DO NOT include any "REST — transition" entries; return only actual exercises (no rest entries).
 
 ## Smooth transitions
 Order exercises so the body flows naturally between positions:
@@ -72,7 +73,7 @@ Respond with JSON:
 Requirements:
 - Include a warm-up as the first track and a stretch/cool-down as the last track.
 - The sum of all track durations must equal ${totalMinutes}.
-- Each 5-minute track should contain 20-32 blocks of content (scale proportionally for other durations).
+- Each track should target about 4 blocks per minute (18-22 blocks per 5 minutes; scale proportionally for other durations).
 - Mix up rep patterns across each track (4x4, 2x2, 3x1, 1x3, singles, 8/16/32 counts, etc.). Don't default everything to "32 counts".
 - Include a { "name": "REST — transition", "counts": "16 counts" } entry between distinct movements within each track.
 - Order exercises for smooth transitions — group by position (standing, floor, etc.) and keep equipment changes minimal.`;
@@ -95,7 +96,7 @@ Respond with JSON:
 }
 
 Requirements:
-- Target 20-32 blocks of content per 5 minutes of duration (scale proportionally: a ${duration}-min track ≈ ${Math.round((duration / 5) * 26)} blocks).
+- Target about 4 blocks of content per minute (18-22 blocks for a 5-minute track; a ${duration}-min track ≈ ${Math.round(duration * 4)} blocks).
 - Mix up rep patterns: use a variety of 4x4, 2x2, 3x1, 1x3, singles, 8 counts, 16 counts, 32 counts, etc. Don't default everything to "32 counts".
 - Include a { "name": "REST — transition", "counts": "16 counts" } entry between each distinct movement to give a 16-count rest for repositioning.
 - Order exercises for smooth transitions — group by body position (standing, kneeling, floor), minimize equipment changes, flow from compound to isolation moves.
