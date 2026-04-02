@@ -13,7 +13,17 @@ export const MUSCLES = [
 ];
 
 export const COUNTS = [
-  '8 counts', '16 counts', '32 counts', '2x32', '3x32', '4x32',
+  'singles',
+  '1x3',
+  '2x2',
+  '3x1',
+  '4x4',
+  '8 counts',
+  '16 counts',
+  '32 counts',
+  '2x32',
+  '3x32',
+  '4x32',
 ];
 
 export const TRACK_EMOJIS = ['🌅', '💪', '🦵', '🏋️', '🔥', '🧘', '⚡', '🎯'];
