@@ -14,6 +14,7 @@ interface TrackSidebarProps {
   onNameChange: (name: string) => void;
   saving: boolean;
   onSave: () => void;
+  onCloseMobile?: () => void;
 }
 
 export default function TrackSidebar({
@@ -27,21 +28,35 @@ export default function TrackSidebar({
   onNameChange,
   saving,
   onSave,
+  onCloseMobile,
 }: TrackSidebarProps) {
   const totalMin = tracks.reduce((s, t) => s + t.duration, 0);
   const mm = String(Math.floor(totalMin)).padStart(2, '0');
 
   return (
-    <aside className="w-[260px] shrink-0 bg-surface border-r border-border flex flex-col overflow-hidden h-screen">
+    <aside className="w-[280px] sm:w-[260px] shrink-0 bg-surface border-r border-border flex flex-col overflow-hidden h-screen">
       {/* Header */}
       <div className="px-5 pt-5 pb-4 border-b border-border">
-        <button
-          onClick={onBack}
-          className="text-[10px] text-text3 uppercase tracking-widest mb-3 hover:text-text2 transition-colors flex items-center gap-1.5"
-          style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800 }}
-        >
-          <span className="text-xs">&larr;</span> Sculpt Builder
-        </button>
+        <div className="flex items-center justify-between mb-3">
+          <button
+            onClick={onBack}
+            className="text-[10px] text-text3 uppercase tracking-widest hover:text-text2 transition-colors flex items-center gap-1.5 min-h-[44px] lg:min-h-0"
+            style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800 }}
+          >
+            <span className="text-xs">&larr;</span> Sculpt Builder
+          </button>
+          {onCloseMobile && (
+            <button
+              onClick={onCloseMobile}
+              className="lg:hidden p-2 -mr-2 text-text3 hover:text-text min-h-[44px] min-w-[44px] flex items-center justify-center"
+              aria-label="Close menu"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
 
         {/* Routine name */}
         <input
@@ -124,7 +139,7 @@ export default function TrackSidebar({
             <button
               key={t.id}
               onClick={() => onSelect(i)}
-              className={`flex items-center gap-2.5 px-3 py-2 rounded-md cursor-pointer transition-colors border text-left w-full ${
+              className={`flex items-center gap-2.5 px-3 py-3 sm:py-2 rounded-md cursor-pointer transition-colors border text-left w-full min-h-[48px] sm:min-h-0 ${
                 active
                   ? 'bg-surface2 border-border2'
                   : 'border-transparent hover:bg-surface2'
@@ -153,7 +168,7 @@ export default function TrackSidebar({
 
         <button
           onClick={onAddTrack}
-          className="flex items-center gap-2 px-3 py-2 rounded-md border border-dashed border-border2 text-text3 text-xs w-full mt-1 hover:border-accent-text hover:text-accent-text transition-colors"
+          className="flex items-center gap-2 px-3 py-3 sm:py-2 rounded-md border border-dashed border-border2 text-text3 text-xs w-full mt-1 hover:border-accent-text hover:text-accent-text transition-colors min-h-[48px] sm:min-h-0"
         >
           <span>+</span> Add track
         </button>
@@ -164,13 +179,13 @@ export default function TrackSidebar({
         <button
           onClick={onSave}
           disabled={saving}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-md text-[13px] font-medium bg-accent text-bg hover:brightness-110 disabled:opacity-50 transition-all w-full"
+          className="flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 rounded-md text-[13px] font-medium bg-accent text-bg hover:brightness-110 disabled:opacity-50 transition-all w-full min-h-[48px] sm:min-h-0"
         >
           {saving ? 'Saving…' : 'Save routine'}
         </button>
         <button
           onClick={onExport}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-md text-[13px] font-medium text-text2 border border-border2 hover:bg-surface2 hover:text-text transition-all w-full"
+          className="flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 rounded-md text-[13px] font-medium text-text2 border border-border2 hover:bg-surface2 hover:text-text transition-all w-full min-h-[48px] sm:min-h-0"
         >
           &darr; Export Word doc
         </button>
