@@ -23,6 +23,7 @@ export default function RoutineEditorPage() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [aiModal, setAiModal] = useState<AIAction | null>(null);
   const [toast, setToast] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   function showToast(msg: string, duration = 2500) {
     setToast(msg);
@@ -213,37 +214,59 @@ export default function RoutineEditorPage() {
 
   return (
     <div className="flex h-screen bg-bg overflow-hidden">
-      <TrackSidebar
-        tracks={routine.tracks}
-        activeIndex={activeIndex}
-        onSelect={setActiveIndex}
-        onAddTrack={addTrack}
-        onExport={handleExport}
-        onBack={() => router.push('/')}
-        routineName={routine.name}
-        onNameChange={(name) => setRoutine({ ...routine, name })}
-        saving={saving}
-        onSave={handleSave}
-      />
+      {/* Mobile sidebar backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
-      <main className="flex-1 flex flex-col overflow-hidden">
+      {/* Sidebar — overlay on mobile, static on desktop */}
+      <div className={`${sidebarOpen ? 'fixed inset-y-0 left-0 z-40' : 'hidden'} lg:relative lg:block`}>
+        <TrackSidebar
+          tracks={routine.tracks}
+          activeIndex={activeIndex}
+          onSelect={(i) => { setActiveIndex(i); setSidebarOpen(false); }}
+          onAddTrack={addTrack}
+          onExport={handleExport}
+          onBack={() => router.push('/')}
+          routineName={routine.name}
+          onNameChange={(name) => setRoutine({ ...routine, name })}
+          saving={saving}
+          onSave={handleSave}
+          onCloseMobile={() => setSidebarOpen(false)}
+        />
+      </div>
+
+      <main className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Top toolbar */}
-        <div className="px-8 py-3 border-b border-border flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
+        <div className="px-4 sm:px-8 py-3 border-b border-border flex items-center justify-between shrink-0 gap-2">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden p-2 text-text3 hover:text-text min-h-[44px] min-w-[44px] flex items-center justify-center shrink-0"
+              aria-label="Open menu"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
             <button
               onClick={() => setAiModal('generate_routine')}
-              className="px-3.5 py-[7px] rounded-md text-xs font-medium bg-accent-dim text-accent-text border border-accent/20 hover:border-accent/40 transition-all"
+              className="px-3 sm:px-3.5 py-[7px] rounded-md text-xs font-medium bg-accent-dim text-accent-text border border-accent/20 hover:border-accent/40 transition-all whitespace-nowrap"
             >
-              AI Generate Routine
+              <span className="hidden sm:inline">AI Generate </span>Routine
             </button>
             <button
               onClick={() => setAiModal('generate_track')}
-              className="px-3.5 py-[7px] rounded-md text-xs font-medium bg-accent-dim text-accent-text border border-accent/20 hover:border-accent/40 transition-all"
+              className="px-3 sm:px-3.5 py-[7px] rounded-md text-xs font-medium bg-accent-dim text-accent-text border border-accent/20 hover:border-accent/40 transition-all whitespace-nowrap"
             >
-              AI Generate Track
+              <span className="hidden sm:inline">AI Generate </span>Track
             </button>
           </div>
-          <div className="text-xs text-text3">
+          <div className="text-xs text-text3 shrink-0">
             {routine.tracks.length} tracks &middot;{' '}
             {routine.tracks.reduce((s, t) => s + t.duration, 0)} min
           </div>

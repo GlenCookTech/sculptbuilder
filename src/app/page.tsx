@@ -79,18 +79,18 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-bg">
       {/* Header */}
-      <header className="border-b border-border px-6 py-4 flex items-center justify-between">
+      <header className="border-b border-border px-4 sm:px-6 py-4 flex items-center justify-between">
         <h1
           className="text-xs font-bold tracking-widest uppercase text-text3"
           style={{ fontFamily: 'Syne, sans-serif' }}
         >
           Sculpt Builder
         </h1>
-        <div className="flex items-center gap-4">
-          <span className="text-xs text-text3">{user.email}</span>
+        <div className="flex items-center gap-3 sm:gap-4">
+          <span className="hidden sm:block text-xs text-text3">{user.email}</span>
           <button
             onClick={() => signOut().then(() => setUser(null))}
-            className="text-xs text-text3 hover:text-text border border-border2 rounded-md px-3 py-1.5 transition-all"
+            className="text-xs text-text3 hover:text-text border border-border2 rounded-md px-3 py-1.5 min-h-[36px] transition-all"
           >
             Sign out
           </button>
@@ -98,7 +98,7 @@ export default function Dashboard() {
       </header>
 
       {/* Content */}
-      <div className="max-w-3xl mx-auto px-6 py-10">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
         <div className="flex items-center justify-between mb-8">
           <h2
             className="text-2xl font-bold text-text"
